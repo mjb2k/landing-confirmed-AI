@@ -1,1 +1,4 @@
-com/mjb2k
+/com/mjb2k
+.DS_Store
+.classpath
+.project
