@@ -13,7 +13,7 @@ The game is relatively simple, but that doesn't mean it won't be hard to impleme
 
 We'll need to develop these two things:
 1. The player
-2. A level designer
+2. A level designer (or just levels)
 3. An evolutionary AI
 
 # The Player
@@ -37,9 +37,36 @@ We're not totally sure how this is going to work yet, it's something I've never 
 
 Here are some ideas I think the AI will need:
 1. Evolutionary, so it must be able to learn by playing the game and dying
-2. We'll need to come up with metrics to tell the AI what we define "success" as.
+2. We'll need to come up with metrics to tell the AI what button it should press ("A", "D", or both)
+    - these will tell the player how to fly
+    - 1: delta V of the player towards nearby obstacles (re-orient and slow down if we're going to fly in an obstacle)
+    - 2: orientation towards nearby obstacles (we want to point away from them so we can slow down)
+    - 3: these need to consider the objective as a priority (IE, we don't want to turn away from the objective)
+3. We'll also need to come up with a mutation algorithm, basically telling the AI what success is
+    - 1: time it takes the player to win
+    - 2: survivability (does the player win)?
+    - 3: distance from objective at end of round
 3. I would also like to add an ability to add our own players into the generational output so the AI can learn from human interaction (and hopefully improve my scores).
-4. There's a lot more requirements that will be necessary, but I first have to make the game to figure this out.
+4. more to come...
+
+
+# The levels
+
+As we're using matter.js at this point, we can simply hand craft the levels with specific box elements (or lines).
+We may want to make an editor for this, but if not it shouldn't be to hard.
+
+the only thing special about the levels is where the player starts, and where the player needs to land.
+
+The player starting somewhere should be relatively simple, as it's just a position on the board.
+
+The objective is a small platform that if the players thruster body comes within a certain y-distance the player will begin 
+a countdown to win, if the countdown reaches 0 the player wins, and anything else that happens is irrelevant.
+
+We also need a means of panning to the player, because levels can grow larger than the screen size, we need a method to
+center the camera on our player.
+
+
+
 
 I plan on completing this by July 20th, 2022, an ambitious time frame, but hopefully I can get it done.
 
