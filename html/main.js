@@ -1,7 +1,7 @@
 // global scope variables
 var engine;
 var render;
-var boxA;
+var player;
 
 // create the engine and render.
 function init() {
@@ -17,12 +17,7 @@ function init() {
 }
 
 function addBody() {
-    var boxB = Matter.Bodies.rectangle(400, 200, 80, 80);
-    var boxTR = Matter.Bodies.rectangle(438, 242, 10, 5);
-    var boxTL = Matter.Bodies.rectangle(362, 242, 10, 5);
-
-    boxA = Matter.Body.create({parts: [boxB, boxTR, boxTL]});
-    Matter.World.add(engine.world, [boxA]);
+    player = new Player(400, 200);
 }
 
 function addGround() {
@@ -30,14 +25,17 @@ function addGround() {
     Matter.World.add(engine.world, [ground]);
 }
 
-function moveBodyD(bodyToMove) {
-    console.log(bodyToMove.angle)
-    console.log({x: Math.sin(bodyToMove.angle)*.05, y:-1*Math.cos(bodyToMove.angle)*.05})
-    Matter.Body.applyForce(bodyToMove, bodyToMove.parts[2].position, {x: Math.sin(bodyToMove.angle)*.05, y:-1*Math.cos(bodyToMove.angle)*.05});
+function moveBodyA() {
+    //console.log("A");
+    player.leftThrust();
 }
 
-function moveBodyA(bodyToMove) {
-    console.log(bodyToMove.angle)
-    console.log({x: Math.sin(bodyToMove.angle)*.05, y:-1*Math.cos(bodyToMove.angle)*.05})
-    Matter.Body.applyForce(bodyToMove, bodyToMove.parts[3].position, {x: Math.sin(bodyToMove.angle)*.05, y:-1*Math.cos(bodyToMove.angle)*.05});
+function moveBodyD() {
+    //console.log("D");
+    player.rightThrust();
+}
+
+function moveBodyAD() {
+    //console.log("AD");
+    player.fullThrust();
 }

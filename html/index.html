@@ -19,17 +19,25 @@
 
     <body onload="init()">
         <script src="libraries/matter.js"></script>
+        <script src="player.js"></script>
         <script src="main.js"></script>
         <button onclick="addBody()"></button>
+        <button onmousedown="moveBodyAD()"></button>
         <script>
-            window.addEventListener('keydown', function (e) {
-                if (e.key == "a") {
-                    moveBodyA(boxA);
+            var map = {}; // You could also use an array
+            onkeydown = onkeyup = function(e){
+                map[e.keyCode] = e.type == 'keydown';
+                /* insert conditional here */
+                if (map[65] && !map[68]) { // A pressed down
+                    moveBodyA();
+                }  
+                else if (!map[65] && map[68]) { // D pressed down
+                    moveBodyD();
                 }
-                else if (e.key == "d") {
-                    moveBodyD(boxA);
+                else if (map[65] && map[68]) {
+                    moveBodyAD();
                 }
-            });
+            }
         </script>
     </body>
 
