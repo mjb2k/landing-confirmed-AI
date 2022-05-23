@@ -1,7 +1,10 @@
+// Copyright of Matthew Boyer, 2022, all rights reserved.
+
 // global scope variables
 var engine;
 var render;
 var player;
+var ground;
 
 // create the engine and render.
 function init() {
@@ -16,26 +19,11 @@ function init() {
     addGround();
 }
 
-function addBody() {
+function addPlayer() {
     player = new Player(400, 200);
 }
 
 function addGround() {
-    var ground = Matter.Bodies.rectangle(400,600,810,60, {isStatic: true});
+    ground = Matter.Bodies.rectangle(400,600,810,60, {isStatic: true});
     Matter.World.add(engine.world, [ground]);
-}
-
-function moveBodyA() {
-    //console.log("A");
-    player.leftThrust();
-}
-
-function moveBodyD() {
-    //console.log("D");
-    player.rightThrust();
-}
-
-function moveBodyAD() {
-    //console.log("AD");
-    player.fullThrust();
 }

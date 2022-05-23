@@ -4,38 +4,35 @@
         <title>Landing Confirmed Game</title>
         <style>
             body {
-                background-color: #CCC;
-
-            }
-            #canvas {
-                background-color: #fff;
-                position: absolute;
-            }
-            #debug {
-                position: absolute;
+                background-color: rgb(202, 40, 40);
+                position:relative
             }
         </style>
     </head>
 
     <body onload="init()">
         <script src="libraries/matter.js"></script>
+        
+        <script src="libraries/raycast.min.js"></script>
         <script src="player.js"></script>
         <script src="main.js"></script>
-        <button onclick="addBody()"></button>
-        <button onmousedown="moveBodyAD()"></button>
+        <button onclick="addPlayer()"></button>
+        <button onmousedown="player.thrusterDelta()"></button>
         <script>
-            var map = {}; // You could also use an array
+            var map = {}; 
             onkeydown = onkeyup = function(e){
                 map[e.keyCode] = e.type == 'keydown';
-                /* insert conditional here */
                 if (map[65] && !map[68]) { // A pressed down
-                    moveBodyA();
+                    player.leftThrust();
                 }  
                 else if (!map[65] && map[68]) { // D pressed down
-                    moveBodyD();
+                    player.rightThrust();
                 }
-                else if (map[65] && map[68]) {
-                    moveBodyAD();
+                else if (map[65] && map[68]) { // both pressed down
+                    player.fullThrust();
+                }
+                else if (map[66]) { //DEBUG test rays
+                    player.thrusterDelta();
                 }
             }
         </script>
