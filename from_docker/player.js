@@ -10,19 +10,19 @@ class Player {
         // these define the players body parts
         this.mainBody = Matter.Bodies.rectangle(startPosX, startPosY, 32, 129);;
         this.thrusterBody = Matter.Bodies.rectangle(startPosX, startPosY+73, 32, 17); 
-        this.leftGear = Matter.Bodies.rectangle(startPosX-30, startPosY+70, 6, 50);
-        this.rightGear = Matter.Bodies.rectangle(startPosX+30, startPosY+70, 6, 50);
-        
+        this.leftGear = Matter.Bodies.rectangle(startPosX-21, startPosY+70, 6, 57);
+        this.rightGear = Matter.Bodies.rectangle(startPosX+21, startPosY+70, 6, 57);
+
         // set the angle of the gears
-        Matter.Body.setAngle(this.leftGear, Math.PI/4);
-        Matter.Body.setAngle(this.rightGear, -1*Math.PI/4);
+        // Matter.Body.setAngle(this.leftGear, Math.PI/4);
+        // Matter.Body.setAngle(this.rightGear, -1*Math.PI/4);
 
         // this defines the players compound body
         this.fullBody = Matter.Body.create({
             parts: [this.mainBody, this.thrusterBody, this.leftGear, this.rightGear]
         });
         this.fullBody.collisionFilter.group = -1; // prevent collisions with debugged raytracing lines
-        this.fullBody.isStatic = false;
+        //this.fullBody.isStatic = false;
         this.fm = this.fullBody.mass * .01; // magnify the force.
 
         // this adds the player to the world
@@ -37,7 +37,7 @@ class Player {
         
         // position of left thruster = parts[2].position - some vector 
         var leftThrusterPosition = Matter.Vector.add(this.fullBody.parts[2].position, {x: -8, y: 0})
-        Matter.Body.applyForce(this.fullBody, leftThrusterPosition, {x: Math.sin(this.fullBody.angle)*this.fm/5, y:-1*Math.cos(this.fullBody.angle)*this.fm/5});
+        Matter.Body.applyForce(this.fullBody, leftThrusterPosition, {x: Math.sin(this.fullBody.angle)*this.fm, y:-1*Math.cos(this.fullBody.angle)*this.fm});
     }
 
     // send force from center-right of thruster position.
@@ -49,14 +49,14 @@ class Player {
 
         // position of right thruster = parts[2].position - some vector 
         var rightThrusterPosition = Matter.Vector.add(this.fullBody.parts[2].position, {x: 8, y: 0})
-        Matter.Body.applyForce(this.fullBody, rightThrusterPosition, {x: Math.sin(this.fullBody.angle)*this.fm/5, y:-1*Math.cos(this.fullBody.angle)*this.fm/5});
+        Matter.Body.applyForce(this.fullBody, rightThrusterPosition, {x: Math.sin(this.fullBody.angle)*this.fm, y:-1*Math.cos(this.fullBody.angle)*this.fm});
     }
 
     // send force from center of thruster position.
     fullThrust() {
         // position of thrusters = parts[2].position
         var thrustersPosition = this.fullBody.parts[2].position
-        Matter.Body.applyForce(this.fullBody, thrustersPosition, {x: Math.sin(this.fullBody.angle)*this.fm/2.5, y:-1*Math.cos(this.fullBody.angle)*this.fm/2.5});
+        Matter.Body.applyForce(this.fullBody, thrustersPosition, {x: Math.sin(this.fullBody.angle)*this.fm, y:-1*Math.cos(this.fullBody.angle)*this.fm});
     }
 
     // detects the distance from objects to the center of the thruster body.
@@ -99,60 +99,17 @@ class Player {
         Matter.World.add(engine.world, [ctx]);
     }
 
-    // draws a debugCircle to visualize rotation point.
-    drawDebugCircle(x, y) {
-        var ctx = Matter.Bodies.circle(x, y, 1);
-        ctx.isStatic = true;
-        ctx.collisionFilter.group = -1; // prevent collisions with player
-        Matter.World.add(engine.world, [ctx]);
-    }
 
     // lifts gears up smoothly around rotation point.
     retractGears() {
-        // we need to calculate the point at which to rotate around, 
-        // which depends on position and angle of the fullBody.
-        var lPoint = this.mainBody.position,
-            rPoint = this.mainBody.position;
-        // the attack angle is the direction we will set our rotation point
-        var attackAngle = Math.PI - .266;
-        // these set the point at which our rotation points need to travel to from
-        // the center position in order to constantly rotate about a fixed point on the body.
-        var ldx = {x: Math.sin(-1*attackAngle)*57.01, y: -1*Math.cos(attackAngle)*57.01}
-        var rdx = {x: Math.sin(attackAngle)*57.01, y: -1*Math.cos(attackAngle)*57.01}
-
-        // rotation points travel to their respective "joints"
-        lPoint = Matter.Vector.add(lPoint, ldx);
-        rPoint = Matter.Vector.add(rPoint, rdx);
-        // DEBUG: draw joint!
-        this.drawDebugCircle(rPoint.x, rPoint.y);
-        
-        // commence rotation!
-        aroundPoint(this.leftGear, 3*Math.PI/180, lPoint);
-        aroundPoint(this.rightGear, -3*Math.PI/180, rPoint);
+        aroundPoint(this.rightGear, -1*Math.PI/180, this.fullBody.position);
+        aroundPoint(this.leftGear, Math.PI/180, this.fullBody.position);
     }
 
     // lowers gears smoothly around rotation point.
     extendGears() {
-        // we need to calculate the point at which to rotate around, 
-        // which depends on position and angle of the fullBody.
-        var lPoint = this.mainBody.position,
-            rPoint = this.mainBody.position;
-        // the attack angle is the direction we will set our rotation point
-        var attackAngle = Math.PI - .266;
-        // these set the point at which our rotation points need to travel to from
-        // the center position in order to constantly rotate about a fixed point on the body.
-        var ldx = {x: Math.sin(-1*attackAngle)*57.01, y: -1*Math.cos(attackAngle)*57.01}
-        var rdx = {x: Math.sin(attackAngle)*57.01, y: -1*Math.cos(attackAngle)*57.01}
-
-        // rotation points travel to their respective "joints"
-        lPoint = Matter.Vector.add(lPoint, ldx);
-        rPoint = Matter.Vector.add(rPoint, rdx);
-        // DEBUG: draw joint!
-        this.drawDebugCircle(rPoint.x, rPoint.y);
-        
-        // commence rotation!
-        aroundPoint(this.leftGear, -10*Math.PI/180, lPoint);
-        aroundPoint(this.rightGear, 10*Math.PI/180, rPoint);
+        aroundPoint(this.rightGear, Math.PI/180, this.fullBody.position);
+        aroundPoint(this.leftGear, -1*Math.PI/180, this.fullBody.position);
     }
 
 }

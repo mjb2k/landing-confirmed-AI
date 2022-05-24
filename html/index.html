@@ -15,7 +15,7 @@
         <script src="libraries/bodyRotateAroundPoint.js"></script>
         <script src="libraries/raycast.min.js"></script>
         <script src="main.js"></script>
-        <script src="player.js"></script>
+        <script src="pp.js"></script>
 
         <button onclick="addPlayer()"></button>
         <button onclick=""></button>
@@ -49,16 +49,14 @@
                 // if sufficiently far from the ground and the angle of 
                 // our landing gears is not alright aligned we shall rotate them
                 // to completely detract.
-                if (thrusterD > 100 || thrusterD == -1) {
-                    //player.retractGears();
-                    console.log("distance to ground > 100");
+                if ((thrusterD > 100 || thrusterD == -1) && player.leftGear.angle < Math.PI) {
+                    player.retractGears();
                 }
 
                 // if sufficiently close and the angle of gears is not 
                 // already extended then we shall extend them.
-                else if (thrusterD < 100) {
-                    //player.extendGears();
-                    console.log("distance to ground < 100");
+                else if (thrusterD < 100 && player.leftGear.angle > Math.PI/4) {
+                    player.extendGears();
                 }
             });
         </script>
