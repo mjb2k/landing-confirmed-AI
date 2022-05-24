@@ -3,21 +3,22 @@
 // global scope variables
 var engine;
 var render;
+var runner = Matter.Runner.create();
 var player;
 var ground;
 
 // create the engine and render.
 function init() {
-    console.log("init");
     engine = Matter.Engine.create();
     render = Matter.Render.create({
         element: document.body,
         engine: engine
     });
-    Matter.Runner.run(engine);
+    Matter.Runner.run(runner, engine);
     Matter.Render.run(render);
-
+    
     addGround();
+    addPlayer();
 }
 
 function addPlayer() {

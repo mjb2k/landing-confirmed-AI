@@ -81,7 +81,7 @@ class Player {
             var dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, thrusterPos));
 
             // this part is debugging to visualize the raytracing lines
-            //var midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
+            var midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
             //this.drawDebugLine(midpoint.x, midpoint.y, ang, dist);
             return dist;
         }

@@ -20,9 +20,19 @@
         <button onclick="addPlayer()"></button>
         <button onclick=""></button>
         <script>
+            // this script tells us what a user is pressing.
             var map = {}; 
             onkeydown = onkeyup = function(e){
                 map[e.keyCode] = e.type == 'keydown';
+            }
+        </script>
+        <script>
+            // this script is for the runner and calculating the relative position of the player
+            // so that we don't overrotate the players gears, and keep up to date position
+            // and much more.
+            Matter.Events.on(runner, 'afterTick', function() {
+
+                // issue commands to the ship based on what player is pressing.
                 if (map[65] && !map[68]) { // A pressed down
                     player.leftThrust();
                 }  
@@ -32,10 +42,25 @@
                 else if (map[65] && map[68]) { // both pressed down
                     player.fullThrust();
                 }
-                else if (map[66]) { //DEBUG test rays
-                    player.thrusterDelta();
+                
+                // a continuously updated distance for thrusterDelta
+                var thrusterD = player.thrusterDelta();
+
+                // if sufficiently far from the ground and the angle of 
+                // our landing gears is not alright aligned we shall rotate them
+                // to completely detract.
+                if (thrusterD > 100 || thrusterD == -1) {
+                    //player.retractGears();
+                    console.log("distance to ground > 100");
                 }
-            }
+
+                // if sufficiently close and the angle of gears is not 
+                // already extended then we shall extend them.
+                else if (thrusterD < 100) {
+                    //player.extendGears();
+                    console.log("distance to ground < 100");
+                }
+            });
         </script>
     </body>
 
