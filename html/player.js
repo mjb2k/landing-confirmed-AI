@@ -12,7 +12,6 @@ class Player {
         this.thrusterBody = Matter.Bodies.rectangle(startPosX, startPosY+73, 32, 17); 
         this.leftGear = Matter.Bodies.rectangle(startPosX-21, startPosY+70, 6, 57);
         this.rightGear = Matter.Bodies.rectangle(startPosX+21, startPosY+70, 6, 57);
-        this.runner = Matter.Runner.create();
 
         // set the angle of the gears
         Matter.Body.setAngle(this.leftGear, Math.PI/4);
