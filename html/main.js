@@ -5,6 +5,8 @@ var engine;
 var render;
 var player;
 var ground;
+var runner = Matter.Runner.create();
+var events;
 
 // create the engine and render.
 function init() {
@@ -13,8 +15,9 @@ function init() {
         element: document.body,
         engine:engine
     });
-    Matter.Runner.run(engine);
-    Matter.Render.run(render);
+    Matter.Runner.run(render);
+    Matter.Runner.run(runner, engine);
+
 
     addGround();
 }

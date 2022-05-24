@@ -10,18 +10,20 @@ class Player {
         // these define the players body parts
         this.mainBody = Matter.Bodies.rectangle(startPosX, startPosY, 32, 129);;
         this.thrusterBody = Matter.Bodies.rectangle(startPosX, startPosY+73, 32, 17); 
-        this.leftGear = Matter.Bodies.rectangle(startPosX+21, startPosY+70, 6, 57);
-        this.rightGear = Matter.Bodies.rectangle(startPosX-21, startPosY+70, 6, 57);
+        this.leftGear = Matter.Bodies.rectangle(startPosX-21, startPosY+70, 6, 57);
+        this.rightGear = Matter.Bodies.rectangle(startPosX+21, startPosY+70, 6, 57);
+        this.runner = Matter.Runner.create();
 
         // set the angle of the gears
-        Matter.Body.setAngle(this.leftGear, -1*Math.PI/4);
-        Matter.Body.setAngle(this.rightGear, Math.PI/4);
+        Matter.Body.setAngle(this.leftGear, Math.PI/4);
+        Matter.Body.setAngle(this.rightGear, -1*Math.PI/4);
 
         // this defines the players compound body
         this.fullBody = Matter.Body.create({
             parts: [this.mainBody, this.thrusterBody, this.leftGear, this.rightGear]
         });
-        this.fullBody.collisionFilter.group = -1;
+        this.fullBody.collisionFilter.group = -1; // prevent collisions with debugged raytracing lines
+        //this.fullBody.isStatic = false;
         this.fm = this.fullBody.mass * .01; // magnify the force.
 
         // this adds the player to the world
@@ -59,9 +61,9 @@ class Player {
     }
 
     // detects the distance from objects to the center of the thruster body.
-    // raycast() is good script I found (credit to Technostalgic for that one) to
+    // raycast() is a good script I found (credit to Technostalgic for that one) to
     // calculate the distance a ray travels outward from the center of the thrusters to
-    // an object (effectively coming out of its "buttom")
+    // an object (effectively coming out of its "bottom")
     thrusterDelta() {
         // first we need to calculate a position the line ends at from the thrusters body to
         // 1000 pixels away in the opposite direction the body is facing.
@@ -72,8 +74,6 @@ class Player {
         // call raycast to get a list of ray collided bodies.
         var rays = raycast([ground], thrusterPos, endPos, true);
 
-
-        // if we get nothing we'll return -1
         if (rays.length > 0) {
             // the first body is the closest one
             var collidedPoint = rays[0].point;
@@ -86,8 +86,7 @@ class Player {
             //this.drawDebugLine(midpoint.x, midpoint.y, ang, dist);
             return dist;
         }
-        else {
-            
+        else { // if we get nothing (no bodies close enough) we'll return -1
             return -1;
         }
     }
@@ -99,6 +98,19 @@ class Player {
         ctx.collisionFilter.group = -1; // prevent collisions with player
         Matter.Body.setAngle(ctx, angle);
         Matter.World.add(engine.world, [ctx]);
+    }
+
+
+    // lifts gears up smoothly around rotation point.
+    retractGears() {
+        aroundPoint(this.rightGear, -1*Math.PI/180, this.fullBody.position);
+        aroundPoint(this.leftGear, Math.PI/180, this.fullBody.position);
+    }
+
+    // lowers gears smoothly around rotation point.
+    extendGears() {
+        aroundPoint(this.rightGear, Math.PI/180, this.fullBody.position);
+        aroundPoint(this.leftGear, -1*Math.PI/180, this.fullBody.position);
     }
 
 }
