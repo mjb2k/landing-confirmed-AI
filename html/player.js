@@ -11,7 +11,9 @@ class Player {
         this.mainBody = Matter.Bodies.rectangle(startPosX, startPosY, 32, 129);;
         this.thrusterBody = Matter.Bodies.rectangle(startPosX, startPosY+73, 32, 17); 
         this.leftGear = Matter.Bodies.rectangle(startPosX-30, startPosY+70, 6, 50);
+        this.leftGear.mass = 0;
         this.rightGear = Matter.Bodies.rectangle(startPosX+30, startPosY+70, 6, 50);
+        this.rightGear.mass = 0;
 
         // these are points that we apply forces/rotations on the players body,
         // since these will be fixed on the body it's simply easier to do it like this then to calculate the points
@@ -54,7 +56,7 @@ class Player {
 
     // send force from center-right of thruster position.
     rightThrust() {
-        Matter.Body.applyForce(this.fullBody, this.rightPivotPoint.position, {x: Math.sin(this.fullBody.angle)*this.fm/6, y:-1*Math.cos(this.fullBody.angle)*this.fm/6});
+        Matter.Body.applyForce(this.fullBody, this.rightThrusterPoint.position, {x: Math.sin(this.fullBody.angle)*this.fm/6, y:-1*Math.cos(this.fullBody.angle)*this.fm/6});
     }
 
     // send force from center of thruster position.

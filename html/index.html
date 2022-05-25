@@ -47,10 +47,13 @@
                 var thrusterD = player.thrusterDelta();
 
                 // look at whether the gears are all the way up, or all the way down
-                var up = false, down;
+                var up = false, down = false;
                 var deltaToGear = Matter.Vector.magnitude(Matter.Vector.sub(player.mainBody.position, player.leftGear.position));
-                if (deltaToGear > 36.85 && deltaToGear < 37.05) {
+                if (deltaToGear > 36.65 && deltaToGear < 37.25) {
                     up = true;
+                }
+                else if (deltaToGear > 75.55 && deltaToGear < 76.75) {
+                    down = true;
                 }
 
                 // if sufficiently far from the ground and the angle of 
@@ -62,7 +65,7 @@
 
                 // if sufficiently close and the angle of gears is not 
                 // already extended then we shall extend them.
-                else if (thrusterD < 100 && thrusterD != -1 && player.leftGear.angle > Math.PI/4 && thrusterD != -1) {
+                else if (thrusterD < 100 && thrusterD != -1 && !down) {
                     player.extendGears();
                 }
             });
