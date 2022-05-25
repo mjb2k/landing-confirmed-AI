@@ -15,7 +15,7 @@
         <script src="libraries/bodyRotateAroundPoint.js"></script>
         <script src="libraries/raycast.min.js"></script>
         <script src="main.js"></script>
-        <script src="pp3.js"></script>
+        <script src="pp6.js"></script>
 
         <button onclick="addPlayer()"></button>
         <button onclick=""></button>
@@ -46,17 +46,23 @@
                 // a continuously updated distance for thrusterDelta
                 var thrusterD = player.thrusterDelta();
 
+                // look at whether the gears are all the way up, or all the way down
+                var up = false, down;
+                var deltaToGear = Matter.Vector.magnitude(Matter.Vector.sub(player.mainBody.position, player.leftGear.position));
+                if (deltaToGear > 36.85 && deltaToGear < 37.05) {
+                    up = true;
+                }
+
                 // if sufficiently far from the ground and the angle of 
                 // our landing gears is not alright aligned we shall rotate them
                 // to completely detract.
-                if ((thrusterD > 100 || thrusterD == -1) && (Math.abs(Math.abs(Math.cos(player.leftGear.angle)) - Math.abs(Math.cos(player.fullBody.angle))) > .01) ) {
-                    console.log([Math.abs(player.fullBody.angle), Math.abs(player.leftGear.angle)]);
+                if ((thrusterD > 100 || (thrusterD == -1)) && !up) {
                     player.retractGears();
                 }
 
                 // if sufficiently close and the angle of gears is not 
                 // already extended then we shall extend them.
-                else if (thrusterD < 100 && player.leftGear.angle > Math.PI/4) {
+                else if (thrusterD < 100 && thrusterD != -1 && player.leftGear.angle > Math.PI/4 && thrusterD != -1) {
                     player.extendGears();
                 }
             });

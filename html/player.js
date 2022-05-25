@@ -15,9 +15,13 @@ class Player {
         this.leftPivotPoint = Matter.Bodies.circle(this.mainBody.position.x-15, this.mainBody.position.y+55, 1);
         this.rightPivotPoint = Matter.Bodies.circle(this.mainBody.position.x+15, this.mainBody.position.y+55, 1);
         
+        console.log([this.leftGear.position, this.mainBody.position]);
+
         // set the angle of the gears
         Matter.Body.setAngle(this.leftGear, Math.PI/4);
         Matter.Body.setAngle(this.rightGear, -1*Math.PI/4);
+
+        console.log([this.leftGear.position, this.mainBody.position]);
 
         // this defines the players compound body
         this.fullBody = Matter.Body.create({
