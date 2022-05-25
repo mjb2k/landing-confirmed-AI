@@ -12,6 +12,8 @@ class Player {
         this.thrusterBody = Matter.Bodies.rectangle(startPosX, startPosY+73, 32, 17); 
         this.leftGear = Matter.Bodies.rectangle(startPosX-30, startPosY+70, 6, 50);
         this.rightGear = Matter.Bodies.rectangle(startPosX+30, startPosY+70, 6, 50);
+        this.leftPivotPoint = Matter.Bodies.circle(this.mainBody.position.x-15, this.mainBody.position.y+55, 1);
+        this.rightPivotPoint = Matter.Bodies.circle(this.mainBody.position.x+15, this.mainBody.position.y+55, 1);
         
         // set the angle of the gears
         Matter.Body.setAngle(this.leftGear, Math.PI/4);
@@ -19,7 +21,7 @@ class Player {
 
         // this defines the players compound body
         this.fullBody = Matter.Body.create({
-            parts: [this.mainBody, this.thrusterBody, this.leftGear, this.rightGear]
+            parts: [this.mainBody, this.thrusterBody, this.leftGear, this.rightGear, this.leftPivotPoint, this.rightPivotPoint]
         });
         this.fullBody.collisionFilter.group = -1; // prevent collisions with debugged raytracing lines
         this.fullBody.isStatic = false;
@@ -107,8 +109,9 @@ class Player {
         Matter.World.add(engine.world, [ctx]);
     }
 
-    // lifts gears up smoothly around rotation point.
+    // lifts gears up smoothly around two pivotPoints
     retractGears() {
+        /*
         // we need to calculate the point at which to rotate around, 
         // which depends on position and angle of the fullBody.
         var lPoint = this.mainBody.position,
@@ -125,20 +128,23 @@ class Player {
         rPoint = Matter.Vector.add(rPoint, rdx);
         // DEBUG: draw joint!
         this.drawDebugCircle(rPoint.x, rPoint.y);
+        */
         
         // commence rotation!
-        aroundPoint(this.leftGear, 3*Math.PI/180, lPoint);
-        aroundPoint(this.rightGear, -3*Math.PI/180, rPoint);
+        aroundPoint(this.leftGear, 3*Math.PI/180, this.leftPivotPoint.position);
+        aroundPoint(this.rightGear, -3*Math.PI/180, this.rightPivotPoint.position);
     }
 
     // lowers gears smoothly around rotation point.
     extendGears() {
+        /*
         // we need to calculate the point at which to rotate around, 
         // which depends on position and angle of the fullBody.
         var lPoint = this.mainBody.position,
             rPoint = this.mainBody.position;
         // the attack angle is the direction we will set our rotation point
-        var attackAngle = Math.PI - .266;
+        // it is relative to the angle that the mainBody is currently facing!
+        var attackAngle = this.mainBody.angle + (Math.PI - .266);
         // these set the point at which our rotation points need to travel to from
         // the center position in order to constantly rotate about a fixed point on the body.
         var ldx = {x: Math.sin(-1*attackAngle)*57.01, y: -1*Math.cos(attackAngle)*57.01}
@@ -149,10 +155,11 @@ class Player {
         rPoint = Matter.Vector.add(rPoint, rdx);
         // DEBUG: draw joint!
         this.drawDebugCircle(rPoint.x, rPoint.y);
+        */
         
         // commence rotation!
-        aroundPoint(this.leftGear, -10*Math.PI/180, lPoint);
-        aroundPoint(this.rightGear, 10*Math.PI/180, rPoint);
+        aroundPoint(this.leftGear, -10*Math.PI/180, this.leftPivotPoint.position);
+        aroundPoint(this.rightGear, 10*Math.PI/180, this.rightPivotPoint.position);
     }
 
 }
