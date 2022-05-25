@@ -12,20 +12,32 @@ class Player {
         this.thrusterBody = Matter.Bodies.rectangle(startPosX, startPosY+73, 32, 17); 
         this.leftGear = Matter.Bodies.rectangle(startPosX-30, startPosY+70, 6, 50);
         this.rightGear = Matter.Bodies.rectangle(startPosX+30, startPosY+70, 6, 50);
+
+        // these are points that we apply forces/rotations on the players body,
+        // since these will be fixed on the body it's simply easier to do it like this then to calculate the points
+        // when we execute these forces.
         this.leftPivotPoint = Matter.Bodies.circle(this.mainBody.position.x-15, this.mainBody.position.y+55, 1);
         this.rightPivotPoint = Matter.Bodies.circle(this.mainBody.position.x+15, this.mainBody.position.y+55, 1);
-        
-        console.log([this.leftGear.position, this.mainBody.position]);
+        var tempLP = Matter.Vector.add(this.thrusterBody.position, {x: -8, y: 0})
+        var tempRP = Matter.Vector.add(this.thrusterBody.position, {x: 8, y: 0})
+        this.leftThrusterPoint = Matter.Bodies.circle(
+            tempLP.x, 
+            tempLP.y, 1);
+        this.rightThrusterPoint = Matter.Bodies.circle(
+            tempRP.x, 
+            tempRP.y, 1);
 
         // set the angle of the gears
         Matter.Body.setAngle(this.leftGear, Math.PI/4);
         Matter.Body.setAngle(this.rightGear, -1*Math.PI/4);
 
-        console.log([this.leftGear.position, this.mainBody.position]);
-
         // this defines the players compound body
         this.fullBody = Matter.Body.create({
-            parts: [this.mainBody, this.thrusterBody, this.leftGear, this.rightGear, this.leftPivotPoint, this.rightPivotPoint]
+            parts: [this.mainBody, this.thrusterBody, 
+                this.leftGear, this.rightGear, 
+                this.leftPivotPoint, this.rightPivotPoint,
+                this.leftThrusterPoint, this.rightThrusterPoint
+            ]
         });
         this.fullBody.collisionFilter.group = -1; // prevent collisions with debugged raytracing lines
         this.fullBody.isStatic = false;
@@ -37,32 +49,17 @@ class Player {
 
     // send force from center-left of thruster position.
     leftThrust() {
-        // DEBUG:
-        //console.log(this.fullBody.angle)
-        //console.log({x: Math.sin(this.fullBody.angle)*.05, y:-1*Math.cos(this.fullBody.angle)*.05})
-        
-        // position of left thruster = parts[2].position - some vector 
-        var leftThrusterPosition = Matter.Vector.add(this.fullBody.parts[2].position, {x: -8, y: 0})
-        Matter.Body.applyForce(this.fullBody, leftThrusterPosition, {x: Math.sin(this.fullBody.angle)*this.fm/5, y:-1*Math.cos(this.fullBody.angle)*this.fm/5});
+        Matter.Body.applyForce(this.fullBody, this.leftThrusterPoint.position, {x: Math.sin(this.fullBody.angle)*this.fm/6, y:-1*Math.cos(this.fullBody.angle)*this.fm/6});
     }
 
     // send force from center-right of thruster position.
     rightThrust() {
-        // DEBUG:
-        //console.log(this.fullBody.angle)
-        //console.log({x: Math.sin(this.fullBody.angle)*.05, y:-1*Math.cos(this.fullBody.angle)*.05})
-        //console.log(this.fullBody.parts[2].position);
-
-        // position of right thruster = parts[2].position - some vector 
-        var rightThrusterPosition = Matter.Vector.add(this.fullBody.parts[2].position, {x: 8, y: 0})
-        Matter.Body.applyForce(this.fullBody, rightThrusterPosition, {x: Math.sin(this.fullBody.angle)*this.fm/5, y:-1*Math.cos(this.fullBody.angle)*this.fm/5});
+        Matter.Body.applyForce(this.fullBody, this.rightPivotPoint.position, {x: Math.sin(this.fullBody.angle)*this.fm/6, y:-1*Math.cos(this.fullBody.angle)*this.fm/6});
     }
 
     // send force from center of thruster position.
     fullThrust() {
-        // position of thrusters = parts[2].position
-        var thrustersPosition = this.fullBody.parts[2].position
-        Matter.Body.applyForce(this.fullBody, thrustersPosition, {x: Math.sin(this.fullBody.angle)*this.fm/2.5, y:-1*Math.cos(this.fullBody.angle)*this.fm/2.5});
+        Matter.Body.applyForce(this.fullBody, this.thrusterBody.position, {x: Math.sin(this.fullBody.angle)*this.fm/3, y:-1*Math.cos(this.fullBody.angle)*this.fm/3});
     }
 
     // detects the distance from objects to the center of the thruster body.
