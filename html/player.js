@@ -75,25 +75,52 @@ class Player {
         var thrusterPos = this.fullBody.parts[2].position
         var endPos = {x: thrusterPos.x + -1*Math.sin(ang)*1000, y:thrusterPos.y + Math.cos(ang)*1000}
         
-        // call raycast to get a list of ray collided bodies.
-        var rays = raycast([ground], thrusterPos, endPos, true);
+        var leftPos = {x: thrusterPos.x + -1*Math.cos(ang)*1000, y:thrusterPos.y + -1*Math.sin(ang)*1000}
+        var rightPos = {x: thrusterPos.x + Math.cos(ang)*1000, y:thrusterPos.y + Math.sin(ang)*1000}
 
-        if (rays.length > 0) {
+        // call raycast to get a list of ray collided bodies.
+        var downRay = raycast([ground], thrusterPos, endPos, true);
+        var leftRay = raycast([ground], thrusterPos, leftPos, true);
+        var rightRay = raycast([ground], thrusterPos, rightPos, true);
+
+        // stuff for the below statements
+        var collidedPoint;
+        var dist;
+        var midpoint;
+        var distance = 1000
+        
+
+        if (downRay.length > 0) {
             // the first body is the closest one
-            var collidedPoint = rays[0].point;
+            collidedPoint = downRay[0].point;
             // now we need to calculate the distance of this ray.
             // this simply does sqrt( (x2-x1)^2 + (y2-y1)^2)
-            var dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, thrusterPos));
-
+            dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, thrusterPos));
             // this part is debugging to visualize the raytracing lines
-            var midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
+            midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
             //this.drawDebugLine(midpoint.x, midpoint.y, ang, dist);
-            return dist;
+            distance = dist;
         }
-        else { // if we get nothing (no bodies close enough) we'll return -1
-            return -1;
+        if (leftRay.length > 0) {
+            collidedPoint = leftRay[0].point;
+            dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, thrusterPos));
+            midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
+            this.drawDebugLine(midpoint.x, midpoint.y, ang-Math.PI/2, dist);
+            if (dist < distance) distance = dist;
         }
+        if (rightRay.length > 0) {
+            collidedPoint = rightRay[0].point;
+            dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, thrusterPos));
+            midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
+            this.drawDebugLine(midpoint.x, midpoint.y, ang+Math.PI/2, dist);
+            if (dist < distance) distance = dist;
+        }
+
+        if (distance != 1000) return distance;
+        else return -1;
+
     }
+
 
     // debug tool to draw the raylines (they are done by matter.js but have no meaningful physical properties)
     drawDebugLine(x, y, angle, length) {

@@ -11,6 +11,7 @@ var ground;
 function init() {
     engine = Matter.Engine.create();
     render = Matter.Render.create({
+
         element: document.body,
         engine: engine
     });
