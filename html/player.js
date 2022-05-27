@@ -105,14 +105,14 @@ class Player {
             collidedPoint = leftRay[0].point;
             dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, thrusterPos));
             midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
-            this.drawDebugLine(midpoint.x, midpoint.y, ang-Math.PI/2, dist);
+            //this.drawDebugLine(midpoint.x, midpoint.y, ang-Math.PI/2, dist);
             if (dist < distance) distance = dist;
         }
         if (rightRay.length > 0) {
             collidedPoint = rightRay[0].point;
             dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, thrusterPos));
             midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
-            this.drawDebugLine(midpoint.x, midpoint.y, ang+Math.PI/2, dist);
+            //this.drawDebugLine(midpoint.x, midpoint.y, ang+Math.PI/2, dist);
             if (dist < distance) distance = dist;
         }
 
