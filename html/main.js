@@ -18,7 +18,7 @@ function init() {
     });
     Matter.Runner.run(runner, engine);
     Matter.Render.run(render);
-    
+
     addGround();
     addPlayer();
 }

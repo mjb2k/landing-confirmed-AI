@@ -50,6 +50,9 @@ class Player {
         // indicate if the landing gears are attached or not
         this.leftAttached = true; 
         this.rightAttached = true;
+        // determine if at anypoint if the gears have stopped touching the mainBody.
+        this.leftTouching = true;
+        this.rightTouching = true;
 
 
         // this adds the player to the world
@@ -151,55 +154,16 @@ class Player {
 
     // lifts gears up smoothly around two pivotPoints
     retractGears() {
-        /*
-        // we need to calculate the point at which to rotate around, 
-        // which depends on position and angle of the fullBody.
-        var lPoint = this.mainBody.position,
-            rPoint = this.mainBody.position;
-        // the attack angle is the direction we will set our rotation point
-        var attackAngle = Math.PI - .266;
-        // these set the point at which our rotation points need to travel to from
-        // the center position in order to constantly rotate about a fixed point on the body.
-        var ldx = {x: Math.sin(-1*attackAngle)*57.01, y: -1*Math.cos(attackAngle)*57.01}
-        var rdx = {x: Math.sin(attackAngle)*57.01, y: -1*Math.cos(attackAngle)*57.01}
-
-        // rotation points travel to their respective "joints"
-        lPoint = Matter.Vector.add(lPoint, ldx);
-        rPoint = Matter.Vector.add(rPoint, rdx);
-        // DEBUG: draw joint!
-        this.drawDebugCircle(rPoint.x, rPoint.y);
-        */
-        
         // commence rotation!
-        aroundPoint(this.leftGear, 3*Math.PI/180, this.leftPivotPoint.position);
-        aroundPoint(this.rightGear, -3*Math.PI/180, this.rightPivotPoint.position);
+        if (this.leftAttached) aroundPoint(this.leftGear, 3*Math.PI/180, this.leftPivotPoint.position);
+        if (this.rightAttached) aroundPoint(this.rightGear, -3*Math.PI/180, this.rightPivotPoint.position);
     }
 
     // lowers gears smoothly around rotation point.
-    extendGears() {
-        /*
-        // we need to calculate the point at which to rotate around, 
-        // which depends on position and angle of the fullBody.
-        var lPoint = this.mainBody.position,
-            rPoint = this.mainBody.position;
-        // the attack angle is the direction we will set our rotation point
-        // it is relative to the angle that the mainBody is currently facing!
-        var attackAngle = this.mainBody.angle + (Math.PI - .266);
-        // these set the point at which our rotation points need to travel to from
-        // the center position in order to constantly rotate about a fixed point on the body.
-        var ldx = {x: Math.sin(-1*attackAngle)*57.01, y: -1*Math.cos(attackAngle)*57.01}
-        var rdx = {x: Math.sin(attackAngle)*57.01, y: -1*Math.cos(attackAngle)*57.01}
-
-        // rotation points travel to their respective "joints"
-        lPoint = Matter.Vector.add(lPoint, ldx);
-        rPoint = Matter.Vector.add(rPoint, rdx);
-        // DEBUG: draw joint!
-        this.drawDebugCircle(rPoint.x, rPoint.y);
-        */
-        
+    extendGears() {        
         // commence rotation!
-        aroundPoint(this.leftGear, -10*Math.PI/180, this.leftPivotPoint.position);
-        aroundPoint(this.rightGear, 10*Math.PI/180, this.rightPivotPoint.position);
+        if (this.leftAttached) aroundPoint(this.leftGear, -10*Math.PI/180, this.leftPivotPoint.position);
+        if (this.rightAttached) aroundPoint(this.rightGear, 10*Math.PI/180, this.rightPivotPoint.position);
     }
 
     // this will make the left gear fall off the player.
@@ -207,16 +171,18 @@ class Player {
         this.parts.splice(this.parts.indexOf(this.leftGear), 1);
         this.parts.splice(this.parts.indexOf(this.leftPivotPoint), 1);
         this.leftGear = Matter.Bodies.rectangle(this.leftGear.position.x, this.leftGear.position.y, 6, 50,
-                                        {angle: this.leftGear.angle, force: this.fullBody.force});
+                                        {angle: this.leftGear.angle});
         objects.push(this.leftGear);
+        this.leftAttached = false;
         Matter.World.add(engine.world, this.leftGear);
     }
     removeRightGear() {
         this.parts.splice(this.parts.indexOf(this.rightGear), 1);
         this.parts.splice(this.parts.indexOf(this.rightPivotPoint), 1);
         this.rightGear = Matter.Bodies.rectangle(this.rightGear.position.x, this.rightGear.position.y, 6, 50, 
-                                                {angle: this.rightGear.angle, force: this.fullBody.force});
+                                                {angle: this.rightGear.angle});
         objects.push(this.rightGear);
+        this.rightAttached = false;
         Matter.World.add(engine.world, this.rightGear);
     }
 }
