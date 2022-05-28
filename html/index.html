@@ -15,7 +15,7 @@
         <script src="libraries/bodyRotateAroundPoint.js"></script>
         <script src="libraries/raycast.min.js"></script>
         <script src="main.js"></script>
-        <script src="pp1.js"></script>
+        <script src="pp2.js"></script>
 
         <button onclick="addPlayer()"></button>
         <button onclick=""></button>
@@ -79,7 +79,7 @@
                 // replace [ground] with a list of level bodies later
                 var mainBodyCollisions = Matter.Query.collides(player.mainBody, [ground]);
                 if (mainBodyCollisions.length >= 1) { // player dies! Delete them!
-                    Matter.World.remove(engine.world, player.fullBody);
+                    //Matter.World.remove(engine.world, player.fullBody);
                 }
                 
                 // Remember F = ma, or F = m * ((v2 - v1)/t), t= 1/60 always (FPS)
@@ -93,21 +93,14 @@
                 var thrusterBodyCollisions = Matter.Query.collides(player.thrusterBody, [ground]);
 
                 // collision with left gear
-                if (leftGearCollisions.length >= 1 && player.fullBody.parts.indexOf(player.leftGear) != -1) {
-                    // calculate force of collision with leftGear
-                    /*
-                    console.log(f)
-                    var body = Matter.Body.create({
-                        parts:[player.mainBody, player.thrusterBody, 
-                        player.rightGear, 
-                        player.rightPivotPoint,
-                        player.leftThrusterPoint, player.rightThrusterPoint]
-                    });
-                    player.fullBody = body;
-                    */
-                    //Matter.World.remove(engine.world, [player.leftGear]);
-                    // if force is above a threshold, pop off the gear (delete for now)
-                    //if (f > 1000) Matter.Body.setParts(player.fullBody, player.parts.splice(2));
+                // player.fullBody.parts.indexOf(player.leftGear) != -1
+                if (leftGearCollisions.length >= 1 && player.parts.indexOf(player.leftGear) != -1) {
+                    //console.log(f)
+                    player.removeLeftGear();         
+                }
+                if (rightGearCollisions.length >= 1 && player.parts.indexOf(player.rightGear) != -1) {
+                    //console.log(f)
+                    player.removeRightGear();     
                 }
 
                 

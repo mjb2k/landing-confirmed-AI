@@ -41,11 +41,7 @@ class Player {
 
         // this defines the players compound body
         this.fullBody = Matter.Body.create({
-            parts: [this.mainBody, this.thrusterBody, 
-                this.leftGear, this.rightGear, 
-                this.leftPivotPoint, this.rightPivotPoint,
-                this.leftThrusterPoint, this.rightThrusterPoint
-            ]
+            parts: this.parts
         });
 
 
@@ -207,4 +203,13 @@ class Player {
         aroundPoint(this.rightGear, 10*Math.PI/180, this.rightPivotPoint.position);
     }
 
+    // this will make the left gear fall off the player.
+    removeLeftGear() {
+        this.parts.splice(this.parts.indexOf(this.leftGear), 1);
+        this.parts.splice(this.parts.indexOf(this.leftPivotPoint), 1);
+    }
+    removeRightGear() {
+        this.parts.splice(this.parts.indexOf(this.rightGear), 1);
+        this.parts.splice(this.parts.indexOf(this.rightPivotPoint), 1);
+    }
 }
