@@ -6,6 +6,7 @@ var render;
 var runner = Matter.Runner.create();
 var player;
 var ground;
+var objects = [];
 
 // create the engine and render.
 function init() {
@@ -28,5 +29,6 @@ function addPlayer() {
 
 function addGround() {
     ground = Matter.Bodies.rectangle(400,600,810,60, {isStatic: true});
+    objects[0] = ground;
     Matter.World.add(engine.world, [ground]);
 }

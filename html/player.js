@@ -11,9 +11,7 @@ class Player {
         this.mainBody = Matter.Bodies.rectangle(startPosX, startPosY, 32, 129);;
         this.thrusterBody = Matter.Bodies.rectangle(startPosX, startPosY+73, 32, 17); 
         this.leftGear = Matter.Bodies.rectangle(startPosX-30, startPosY+70, 6, 50);
-        this.leftGear.mass = 0;
         this.rightGear = Matter.Bodies.rectangle(startPosX+30, startPosY+70, 6, 50);
-        this.rightGear.mass = 0;
 
         // these are points that we apply forces/rotations on the players body,
         // since these will be fixed on the body it's simply easier to do it like this then to calculate the points
@@ -44,12 +42,14 @@ class Player {
             parts: this.parts
         });
 
-
         // these are attributes that are relevant to the player but aren't bodies
         this.fullBody.collisionFilter.group = -1; // prevent collisions with debugged raytracing lines
         this.fullBody.isStatic = false;
         this.fm = this.fullBody.mass * .01; // magnify the force.
-        this.preVelocity = {x: 0, y:0}
+        this.preVelocity = {x: 0, y:0}; // initialize pre-velocity so we can calculate force
+        // indicate if the landing gears are attached or not
+        this.leftAttached = true; 
+        this.rightAttached = true;
 
 
         // this adds the player to the world
@@ -132,7 +132,6 @@ class Player {
 
     }
 
-
     // debug tool to draw the raylines (they are done by matter.js but have no meaningful physical properties)
     drawDebugLine(x, y, angle, length) {
         var ctx = Matter.Bodies.rectangle(x, y, 2, length);
@@ -207,9 +206,17 @@ class Player {
     removeLeftGear() {
         this.parts.splice(this.parts.indexOf(this.leftGear), 1);
         this.parts.splice(this.parts.indexOf(this.leftPivotPoint), 1);
+        this.leftGear = Matter.Bodies.rectangle(this.leftGear.position.x, this.leftGear.position.y, 6, 50,
+                                        {angle: this.leftGear.angle, force: this.fullBody.force});
+        objects.push(this.leftGear);
+        Matter.World.add(engine.world, this.leftGear);
     }
     removeRightGear() {
         this.parts.splice(this.parts.indexOf(this.rightGear), 1);
         this.parts.splice(this.parts.indexOf(this.rightPivotPoint), 1);
+        this.rightGear = Matter.Bodies.rectangle(this.rightGear.position.x, this.rightGear.position.y, 6, 50, 
+                                                {angle: this.rightGear.angle, force: this.fullBody.force});
+        objects.push(this.rightGear);
+        Matter.World.add(engine.world, this.rightGear);
     }
 }
