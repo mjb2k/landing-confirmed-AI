@@ -33,6 +33,12 @@ class Player {
         Matter.Body.setAngle(this.leftGear, Math.PI/4);
         Matter.Body.setAngle(this.rightGear, -1*Math.PI/4);
 
+        // parts array
+        this.parts = [this.mainBody, this.thrusterBody, 
+            this.leftGear, this.rightGear, 
+            this.leftPivotPoint, this.rightPivotPoint,
+            this.leftThrusterPoint, this.rightThrusterPoint]
+
         // this defines the players compound body
         this.fullBody = Matter.Body.create({
             parts: [this.mainBody, this.thrusterBody, 
@@ -41,12 +47,21 @@ class Player {
                 this.leftThrusterPoint, this.rightThrusterPoint
             ]
         });
+
+
+        // these are attributes that are relevant to the player but aren't bodies
         this.fullBody.collisionFilter.group = -1; // prevent collisions with debugged raytracing lines
         this.fullBody.isStatic = false;
         this.fm = this.fullBody.mass * .01; // magnify the force.
+        this.preVelocity = {x: 0, y:0}
+
 
         // this adds the player to the world
         Matter.World.add(engine.world, [this.fullBody]);
+    }
+
+    updatePreVelocity() {
+        this.preVelocity =  {x: this.fullBody.velocity.x, y: this.fullBody.velocity.y};
     }
 
     // send force from center-left of thruster position.
