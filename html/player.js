@@ -195,14 +195,14 @@ class Player {
 
     // these functions will be used to launch the gears
     // special case for when one gear is attached
-    launchLeftGear() {
+    ejectLeftGear() {
         // first remove the gear
         this.removeLeftGear();
         // now we apply force in the relative side direction
         Matter.Body.applyForce(this.leftGear, this.leftGear.position, 
             {x: -1*Math.cos(this.fullBody.angle)*this.fm/6, y:-1*Math.sin(this.fullBody.angle)*this.fm/6});
     }
-    launchRightGear() {
+    ejectRightGear() {
         this.removeRightGear();
         Matter.Body.applyForce(this.rightGear, this.rightGear.position, 
             {x: Math.cos(this.fullBody.angle)*this.fm/6, y:Math.sin(this.fullBody.angle)*this.fm/6});

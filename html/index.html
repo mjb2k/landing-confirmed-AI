@@ -122,26 +122,22 @@
                     var bodyBs = []
                     mainBodyCollisions.forEach(function (v) {
                         if (v.bodyB != player.leftGear && v.bodyB != player.rightGear) {
-                            console.log("death0");
+                            console.log("death by normal");
                             player.dead = true;
                         }
                         bodyBs.push(v.bodyB);
                     });
 
-                    if (!player.dead) {
-                        // at this point we've ruled out we're colliding with anything
-                        // but the gears, so we need to check to make sure we still can, or die.
-                        if (bodyBs.indexOf(player.leftGear) != -1) {
-                            // leftgear is collided, check if it still can touch.
-                            if (!player.leftTouching) {console.log("death1"); player.dead = true;}
-                        }
-                        if (bodyBs.indexOf(player.rightGear) != -1) {
-                            // leftgear is collided, check if it still can touch.
-                            if (!player.rightTouching) {console.log("death2"); player.dead = true;}
-                        }
+                    // at this point we've ruled out we're colliding with anything
+                    // but the gears, so we need to check to make sure we still can, or die.
+                    if (bodyBs.indexOf(player.leftGear) != -1) {
+                        // leftgear is collided, check if it still can touch.
+                        if (!player.leftTouching) {console.log("death by LG"); player.dead = true;}
                     }
-                    // we cant just do else since we might indicate the player is dead after the last if statement.
-                    //if (player.dead) Matter.World.remove(engine.world, player.fullBody);
+                    if (bodyBs.indexOf(player.rightGear) != -1) {
+                        // leftgear is collided, check if it still can touch.
+                        if (!player.rightTouching) {console.log("death by RG"); player.dead = true;}
+                        }              
                 }
                 
 
@@ -178,26 +174,35 @@
                 
                 /* 
                     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    THROW GEAR IF ONE IS ATTACHED STILL
+                        SPECIAL CASES FOR PLAYER
                     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 */
                 
                 // in LC if one gear falls off, the other will eject off
                 // after a few seconds.
-                // we'll just use our *td stat to determine
-                // whether a gear should detach or not
-                // rather than have another variable to keep track of 
-                // the absolute time a gear has been detached
 
                 // verify rightGear has been off for 3 seconds, and leftGear attached
                 if (player.rtd > 3 && player.parts.indexOf(player.leftGear) != -1) {
-                    player.launchLeftGear();
+                    player.ejectLeftGear();
                 }
                 // verify rightGear has been off for 3 seconds, and leftGear attached
                 else if (player.ltd > 3 && player.parts.indexOf(player.rightGear) != -1) {
-                    player.launchRightGear();
+                    player.ejectRightGear();
                 }
 
+                // in LC if the player speed is faster than 100 m/s they should die.
+                // for now set to 40 because it takes a while to get there.
+                if (Matter.Vector.magnitude(player.fullBody.velocity) > 40) {
+                    console.log("death by velocity");
+                    player.dead = true;
+                }
+
+                // in LC if the player is >400 meters away from the objective, they die
+                // TODO (need to make the objective first)
+
+
+                // deletes the player if they're dead.
+                if (player.dead) Matter.World.remove(engine.world, player.fullBody);
             });
         </script>
     </body>
