@@ -53,6 +53,10 @@ class Player {
         // determine if at anypoint if the gears have stopped touching the mainBody.
         this.leftTouching = true;
         this.rightTouching = true;
+        // determine how long the legs have been detached for.
+        this.ltd = 0;
+        this.rtd = 0;
+        this.dead = false;
 
 
         // this adds the player to the world
