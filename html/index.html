@@ -106,12 +106,12 @@
                 // if they touch again within a small period.
                 if (leftCollideWithMainBody == null) {
                     player.ltd = player.ltd + 1/60
-                    if (player.ltd >= 1/2) player.leftTouching = false;
+                    if (player.ltd >= 1/10) player.leftTouching = false;
                 }
                 else player.ltd = 0; // reset timer if they touch again quickly.
                 if (rightCollideWithMainBody == null) {
                     player.rtd = player.rtd + 1/60
-                    if (player.rtd >= 1/2) player.rightTouching = false;
+                    if (player.rtd >= 1/10) player.rightTouching = false;
                 }
                 else player.rtd = 0; 
 
@@ -143,9 +143,9 @@
 
 
                 /* 
-                    !!!!!!!!!!!!!!!!!!!!!!!!!
-                    COLLISIONS WITH THE GEARS
-                    !!!!!!!!!!!!!!!!!!!!!!!!!
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    COLLISIONS WITH THE GEARS & THRUSTER BODY
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 */
 
                 // Remember F = ma, or F = m * ((v2 - v1)/t), t= 1/60 always (FPS)
@@ -170,6 +170,12 @@
                     f > 1000) {
                     player.removeRightGear();     
                 }
+                // if the thruster body hits the ground above some force we die.
+                if (thrusterBodyCollisions.length >= 1 &&
+                    f > 3000) {
+                        console.log("hit ground too hard");
+                        player.dead = true;
+                    }
 
                 
                 /* 
@@ -201,8 +207,14 @@
                 // TODO (need to make the objective first)
 
 
-                // deletes the player if they're dead.
-                if (player.dead) Matter.World.remove(engine.world, player.fullBody);
+                // deletes the player if they're dead, and gears.
+                if (player.dead) {
+                    Matter.World.remove(engine.world, player.fullBody);
+                    if (objects.indexOf(player.leftGear) != -1)
+                        Matter.World.remove(engine.world, player.leftGear);
+                    if (objects.indexOf(player.rightGear) != -1)
+                        Matter.World.remove(engine.world, player.rightGear);
+                }
             });
         </script>
     </body>
