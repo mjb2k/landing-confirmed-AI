@@ -18,7 +18,7 @@
         <script src="player.js"></script>
 
         <button onclick="addPlayer()"></button>
-        <button onclick=""></button>
+        <button onclick="player.launchLeftGear()"></button>
         <script>
             // this script tells us what a user is pressing.
             var map = {}; 
@@ -36,6 +36,12 @@
             // post tick actions.
             Matter.Events.on(runner, 'afterTick', function() {
 
+                /* 
+                    !!!!!!!!!!!!!!
+                    BUTTON PRESSES
+                    !!!!!!!!!!!!!!
+                */
+
                 // issue commands to the ship based on what player is pressing.
                 if (map[65] && !map[68]) { // A pressed down
                     player.leftThrust();
@@ -47,12 +53,20 @@
                     player.fullThrust();
                 }
                 
+
+                /* 
+                    !!!!!!!!!!!!!!!!!!!!!
+                    RAISE/LOWER THRUSTERS
+                    !!!!!!!!!!!!!!!!!!!!!
+                */
+
                 // This code is used to raise or lower the landing gears
                 var thrusterD = player.thrusterDelta(); // gets how close thruster is to ground
                 var up = false, down = false;
                 var deltaToLeftGear = Matter.Vector.magnitude(Matter.Vector.sub(player.mainBody.position, player.leftGear.position));
                 var deltaToRightGear = Matter.Vector.magnitude(Matter.Vector.sub(player.mainBody.position, player.rightGear.position));
-                // distance within an error bound, we know our gears are up or down.
+
+                // distance within an error bound, determines if our gears are up or down.
                 if ((deltaToLeftGear > 36.65 && deltaToLeftGear < 37.25) || 
                     (deltaToRightGear > 36.65 && deltaToRightGear < 37.25)) {
                     up = true;
@@ -76,12 +90,20 @@
                     player.extendGears();
                 }
 
+
+                /* 
+                    !!!!!!!!!!!!!!!!!!!!!!!!!
+                    COLLISIONS WITH MAIN BODY 
+                    !!!!!!!!!!!!!!!!!!!!!!!!!
+                */
+
                 // now we detect collisions between the players body parts and the level
                 var mainBodyCollisions = Matter.Query.collides(player.mainBody, objects);
                 var leftCollideWithMainBody = Matter.Collision.collides(player.mainBody, player.leftGear);
                 var rightCollideWithMainBody = Matter.Collision.collides(player.mainBody, player.rightGear);
+
                 // we also want to have timedelta so we still consider them touching technically
-                // if they touch again with a small period.
+                // if they touch again within a small period.
                 if (leftCollideWithMainBody == null) {
                     player.ltd = player.ltd + 1/60
                     if (player.ltd >= 1/2) player.leftTouching = false;
@@ -93,8 +115,9 @@
                 }
                 else player.rtd = 0; 
 
-                if (mainBodyCollisions.length >= 1) { // we have a collision with the mainBody
-
+                // we have a collision with the mainBody
+                // here we decide whether the player dies or not.
+                if (mainBodyCollisions.length >= 1) { 
                     // die if colliding with anything that's not the gears
                     var bodyBs = []
                     mainBodyCollisions.forEach(function (v) {
@@ -105,10 +128,9 @@
                         bodyBs.push(v.bodyB);
                     });
 
-                    // at this point we've ruled out we're colliding with anything
-                    // but the gears, so we need to check to make sure we still can
-                    // otherwise, die.
                     if (!player.dead) {
+                        // at this point we've ruled out we're colliding with anything
+                        // but the gears, so we need to check to make sure we still can, or die.
                         if (bodyBs.indexOf(player.leftGear) != -1) {
                             // leftgear is collided, check if it still can touch.
                             if (!player.leftTouching) {console.log("death1"); player.dead = true;}
@@ -118,13 +140,20 @@
                             if (!player.rightTouching) {console.log("death2"); player.dead = true;}
                         }
                     }
-                    
-    
-                    //Matter.World.remove(engine.world, player.fullBody);
+                    // we cant just do else since we might indicate the player is dead after the last if statement.
+                    //if (player.dead) Matter.World.remove(engine.world, player.fullBody);
                 }
                 
+
+
+                /* 
+                    !!!!!!!!!!!!!!!!!!!!!!!!!
+                    COLLISIONS WITH THE GEARS
+                    !!!!!!!!!!!!!!!!!!!!!!!!!
+                */
+
                 // Remember F = ma, or F = m * ((v2 - v1)/t), t= 1/60 always (FPS)
-                // calculate acceleration 
+                // calculate acceleration & force
                 var acc = Matter.Vector.mult(Matter.Vector.sub(player.fullBody.velocity, player.preVelocity), 60);
                 var f = Matter.Vector.magnitude(Matter.Vector.mult(acc, player.fullBody.mass));
 
@@ -137,7 +166,7 @@
                 // player.fullBody.parts.indexOf(player.leftGear) != -1
                 if (leftGearCollisions.length >= 1 && 
                     player.parts.indexOf(player.leftGear) != -1 && 
-                    f> 1000) {
+                    f > 1000) {
                     player.removeLeftGear();         
                 }
                 if (rightGearCollisions.length >= 1 && 
@@ -147,6 +176,28 @@
                 }
 
                 
+                /* 
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    THROW GEAR IF ONE IS ATTACHED STILL
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                */
+                
+                // in LC if one gear falls off, the other will eject off
+                // after a few seconds.
+                // we'll just use our *td stat to determine
+                // whether a gear should detach or not
+                // rather than have another variable to keep track of 
+                // the absolute time a gear has been detached
+
+                // verify rightGear has been off for 3 seconds, and leftGear attached
+                if (player.rtd > 3 && player.parts.indexOf(player.leftGear) != -1) {
+                    player.launchLeftGear();
+                }
+                // verify rightGear has been off for 3 seconds, and leftGear attached
+                else if (player.ltd > 3 && player.parts.indexOf(player.rightGear) != -1) {
+                    player.launchRightGear();
+                }
+
             });
         </script>
     </body>

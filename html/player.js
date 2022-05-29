@@ -69,17 +69,20 @@ class Player {
 
     // send force from center-left of thruster position.
     leftThrust() {
-        Matter.Body.applyForce(this.fullBody, this.leftThrusterPoint.position, {x: Math.sin(this.fullBody.angle)*this.fm/6, y:-1*Math.cos(this.fullBody.angle)*this.fm/6});
+        Matter.Body.applyForce(this.fullBody, this.leftThrusterPoint.position, 
+            {x: Math.sin(this.fullBody.angle)*this.fm/6, y:-1*Math.cos(this.fullBody.angle)*this.fm/6});
     }
 
     // send force from center-right of thruster position.
     rightThrust() {
-        Matter.Body.applyForce(this.fullBody, this.rightThrusterPoint.position, {x: Math.sin(this.fullBody.angle)*this.fm/6, y:-1*Math.cos(this.fullBody.angle)*this.fm/6});
+        Matter.Body.applyForce(this.fullBody, this.rightThrusterPoint.position, 
+            {x: Math.sin(this.fullBody.angle)*this.fm/6, y:-1*Math.cos(this.fullBody.angle)*this.fm/6});
     }
 
     // send force from center of thruster position.
     fullThrust() {
-        Matter.Body.applyForce(this.fullBody, this.thrusterBody.position, {x: Math.sin(this.fullBody.angle)*this.fm/3, y:-1*Math.cos(this.fullBody.angle)*this.fm/3});
+        Matter.Body.applyForce(this.fullBody, this.thrusterBody.position, 
+            {x: Math.sin(this.fullBody.angle)*this.fm/3, y:-1*Math.cos(this.fullBody.angle)*this.fm/3});
     }
 
     // detects the distance from objects to the center of the thruster body.
@@ -188,5 +191,20 @@ class Player {
         objects.push(this.rightGear);
         this.rightAttached = false;
         Matter.World.add(engine.world, this.rightGear);
+    }
+
+    // these functions will be used to launch the gears
+    // special case for when one gear is attached
+    launchLeftGear() {
+        // first remove the gear
+        this.removeLeftGear();
+        // now we apply force in the relative side direction
+        Matter.Body.applyForce(this.leftGear, this.leftGear.position, 
+            {x: -1*Math.cos(this.fullBody.angle)*this.fm/6, y:-1*Math.sin(this.fullBody.angle)*this.fm/6});
+    }
+    launchRightGear() {
+        this.removeRightGear();
+        Matter.Body.applyForce(this.rightGear, this.rightGear.position, 
+            {x: Math.cos(this.fullBody.angle)*this.fm/6, y:Math.sin(this.fullBody.angle)*this.fm/6});
     }
 }
