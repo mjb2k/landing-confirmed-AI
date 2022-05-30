@@ -15,7 +15,9 @@
         <script src="libraries/bodyRotateAroundPoint.js"></script>
         <script src="libraries/raycast.min.js"></script>
         <script src="main.js"></script>
+        <script src="level1.js"></script>
         <script src="player.js"></script>
+
 
         <button onclick="addPlayer()"></button>
         <button onclick="player.launchLeftGear()"></button>
@@ -27,10 +29,14 @@
             }
         </script>
         <script>
-
             // we need to keep track of the previous velocity of the player 
             Matter.Events.on(runner, 'beforeTick', function () {
                 player.updatePreVelocity();
+
+                Matter.Bounds.shift(render.bounds, {
+                    x: player.fullBody.position.x - window.innerWidth / 2,
+                    y: player.fullBody.position.y - window.innerHeight / 2
+                });
             });
 
             // post tick actions.
@@ -207,6 +213,34 @@
                 // TODO (need to make the objective first)
 
 
+            
+                /* 
+                    !!!!!!!!!!!!!!!
+                         WINNING
+                    !!!!!!!!!!!!!!!
+                */
+
+                // player wins if their time on the platform is greater than 1.5 seconds
+                if (player.winTime > 1.5) {
+                    console.log("YOU WIN!!!!");
+                }
+                // if player is close enough to platform, start ticking their win timer.
+                else if (player.distanceToObjective() < 25) {
+                    player.winTime += 1/60;
+                }
+                // if player is not close then reset to 0.
+                else {
+                    player.winTime = 0;
+                }
+
+
+                /* 
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+                         DEATH & UPDATE LEVEL
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+                */
+
+
                 // deletes the player if they're dead, and gears.
                 if (player.dead) {
                     Matter.World.remove(engine.world, player.fullBody);
@@ -215,6 +249,7 @@
                     if (objects.indexOf(player.rightGear) != -1)
                         Matter.World.remove(engine.world, player.rightGear);
                 }
+                level.update();
             });
         </script>
     </body>

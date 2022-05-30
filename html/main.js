@@ -5,21 +5,26 @@ var engine;
 var render;
 var runner = Matter.Runner.create();
 var player;
-var ground;
+var level;
 var objects = [];
+var objective; // a single body that is considered the objective
 
 // create the engine and render.
 function init() {
     engine = Matter.Engine.create();
     render = Matter.Render.create({
-
         element: document.body,
-        engine: engine
+        engine: engine,
+        options: {
+            width: window.innerWidth, 
+            height: window.innerHeight,
+            hasBounds: true
+        }
     });
     Matter.Runner.run(runner, engine);
     Matter.Render.run(render);
 
-    addGround();
+    addLevel();
     addPlayer();
 }
 
@@ -28,7 +33,5 @@ function addPlayer() {
 }
 
 function addGround() {
-    ground = Matter.Bodies.rectangle(400,600,810,60, {isStatic: true});
-    objects[0] = ground;
-    Matter.World.add(engine.world, [ground]);
+    level = new Level1();
 }

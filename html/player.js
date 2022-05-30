@@ -56,7 +56,11 @@ class Player {
         // determine how long the legs have been detached for.
         this.ltd = 0;
         this.rtd = 0;
+        // determine how long the player has been on the platform
+        this.winTime = 0;
+        // death boolean
         this.dead = false;
+    
 
 
         // this adds the player to the world
@@ -108,7 +112,7 @@ class Player {
         var collidedPoint;
         var dist;
         var midpoint;
-        var distance = 1000
+        var distance = [];
         
 
         if (downRay.length > 0) {
@@ -206,5 +210,9 @@ class Player {
         this.removeRightGear();
         Matter.Body.applyForce(this.rightGear, this.rightGear.position, 
             {x: Math.cos(this.fullBody.angle)*this.fm/6, y:Math.sin(this.fullBody.angle)*this.fm/6});
+    }
+
+    distanceToObjective() {
+        return Matter.Vector.magnitude(Matter.Vector.sub(objective.position, thrusterPos));
     }
 }
