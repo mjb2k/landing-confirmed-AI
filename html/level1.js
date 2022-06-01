@@ -17,13 +17,13 @@
 class Level1 {
     constructor() {
         // define the parts of the body
-        this.spawnPlatform = Matter.Bodies.rectangle(0, 10000, 500, 5);
+        this.spawnPlatform = Matter.Bodies.rectangle(0, 1500, 500, 5, {isStatic: true});
         objects.push(this.spawnPlatform);
-        this.obstacle1 = Matter.Bodies.rectangle(1000, 8500, 250, 250);
+        this.obstacle1 = Matter.Bodies.rectangle(1000, 750, 250, 250, {isStatic: true});
         objects.push(this.obstacle1);
-        this.obstacle2 = Matter.Bodies.rectangle(1500, 8500, 250, 250);
+        this.obstacle2 = Matter.Bodies.rectangle(1750, 750, 250, 250, {isStatic: true});
         objects.push(this.obstacle2);
-        this.winPlatform = Matter.Bodies.rectangle(2500, 7000, 500, 5);
+        this.winPlatform = Matter.Bodies.rectangle(2250, 0, 500, 5, {isStatic: true});
         objects.push(this.winPlatform);
         objective = this.winPlatform;
 

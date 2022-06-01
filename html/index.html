@@ -6,6 +6,11 @@
             body {
                 background-color: red;
             }
+            canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
         </style>
     </head>
 
@@ -15,9 +20,11 @@
         <script src="libraries/bodyRotateAroundPoint.js"></script>
         <script src="libraries/raycast.min.js"></script>
         <script src="main.js"></script>
-        <script src="level1.js"></script>
         <script src="player.js"></script>
+        <script src="level1.js"></script>
 
+
+        <canvas id="canvas"></canvas>
 
         <button onclick="addPlayer()"></button>
         <button onclick="player.launchLeftGear()"></button>
@@ -32,6 +39,13 @@
             // we need to keep track of the previous velocity of the player 
             Matter.Events.on(runner, 'beforeTick', function () {
                 player.updatePreVelocity();
+
+
+                var canvas = overlay;
+                var ctx = canvas.getContext("2d");
+                ctx.fillStyle = "blue";
+                ctx.font = "15px Comic Sans MS";
+                ctx.fillText(player.thrusterBody.position.x, 400, 432.5);
 
                 Matter.Bounds.shift(render.bounds, {
                     x: player.fullBody.position.x - window.innerWidth / 2,
@@ -160,20 +174,20 @@
                 var f = Matter.Vector.magnitude(Matter.Vector.mult(acc, player.fullBody.mass));
 
                 // detect collisions with the leftGear, rightGear and thrusterBody
-                var leftGearCollisions = Matter.Query.collides(player.leftGear, [ground]);
-                var rightGearCollisions = Matter.Query.collides(player.rightGear, [ground]);
-                var thrusterBodyCollisions = Matter.Query.collides(player.thrusterBody, [ground]);
+                var leftGearCollisions = Matter.Query.collides(player.leftGear, objects);
+                var rightGearCollisions = Matter.Query.collides(player.rightGear, objects);
+                var thrusterBodyCollisions = Matter.Query.collides(player.thrusterBody, objects);
 
                 // collision with left gear
                 // player.fullBody.parts.indexOf(player.leftGear) != -1
                 if (leftGearCollisions.length >= 1 && 
                     player.parts.indexOf(player.leftGear) != -1 && 
-                    f > 1000) {
+                    f > 2000) {
                     player.removeLeftGear();         
                 }
                 if (rightGearCollisions.length >= 1 && 
                     player.parts.indexOf(player.rightGear) != -1 &&
-                    f > 1000) {
+                    f > 2000) {
                     player.removeRightGear();     
                 }
                 // if the thruster body hits the ground above some force we die.

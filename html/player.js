@@ -104,9 +104,9 @@ class Player {
         var rightPos = {x: thrusterPos.x + Math.cos(ang)*1000, y:thrusterPos.y + Math.sin(ang)*1000}
 
         // call raycast to get a list of ray collided bodies.
-        var downRay = raycast([ground], thrusterPos, endPos, true);
-        var leftRay = raycast([ground], thrusterPos, leftPos, true);
-        var rightRay = raycast([ground], thrusterPos, rightPos, true);
+        var downRay = raycast(objects, thrusterPos, endPos, true);
+        var leftRay = raycast(objects, thrusterPos, leftPos, true);
+        var rightRay = raycast(objects, thrusterPos, rightPos, true);
 
         // stuff for the below statements
         var collidedPoint;
@@ -213,6 +213,6 @@ class Player {
     }
 
     distanceToObjective() {
-        return Matter.Vector.magnitude(Matter.Vector.sub(objective.position, thrusterPos));
+        return Matter.Vector.magnitude(Matter.Vector.sub(objective.position, this.thrusterBody.position));
     }
 }
