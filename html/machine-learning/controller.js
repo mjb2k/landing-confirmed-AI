@@ -32,6 +32,7 @@ class Controller {
         this.player = player;
         this.state = [];
         this.reward = 0;
+
     }
 
     /*
@@ -52,8 +53,7 @@ class Controller {
                     this.player.mainBody.angle, 
                     this.player.mainBody.velocity,
                     this.player.distanceToObjective(),
-                    d.getTime() - startTime,
-                    DANGER, DANGER, DANGER, DANGER
+                    d.getTime() - startTime
                 ]
     }
 
@@ -75,5 +75,15 @@ class Controller {
         }
         this.reward -= this.player.distanceToObjective()/10000;
         this.reward -= (d.getTime() - startTime)/60;
+    }
+
+    /*
+        Here we take the state and calculate what our next move should be
+        We have three options, both thrust, left, or right.
+    */
+    move() {
+         var rand = Math.random();
+         if (rand < .5) this.player.leftThrust();
+         if (rand > .5) this.player.rightThrust();
     }
 }

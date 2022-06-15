@@ -22,13 +22,10 @@
         <script src="main.js"></script>
         <script src="player.js"></script>
         <script src="level1.js"></script>
-        <script src="machine-learning/population.js"></script>
+        <script src="machine-learning/controller.js"></script>
 
 
         <canvas id="canvas"></canvas>
-
-        <button onclick="addPlayer()"></button>
-        <button onclick="player.launchLeftGear()"></button>
         <script>
             // this script tells us what a user is pressing.
             var map = {}; 
@@ -37,21 +34,21 @@
             }
         </script>
         <script>
-            // we need to keep track of the previous velocity of the player 
+            // pre-tick actions
             Matter.Events.on(runner, 'beforeTick', function () {
+                // we need to keep track of the previous velocity of the player 
                 player.updatePreVelocity();
 
-                /*
-                When we figure out better rendering we'll deal with this lol
-                but first I want to make the learning AI.
+                // Record the state of the player
+                controller.getState();
+                // make the next move of the player
+                controller.move();
 
-                var canvas = overlay;
-                var ctx = canvas.getContext("2d");
-                ctx.fillStyle = "blue";
-                ctx.font = "15px Comic Sans MS";
-                ctx.fillText(player.thrusterBody.position.x, 400, 432.5);
-                */
 
+
+
+
+                // Center canvas on player.
                 Matter.Bounds.shift(render.bounds, {
                     x: player.fullBody.position.x - window.innerWidth / 2,
                     y: player.fullBody.position.y - window.innerHeight / 2
@@ -104,14 +101,13 @@
                 // if sufficiently far from the ground and the angle of 
                 // our landing gears is not already aligned we shall rotate them
                 // to completely retract.
-                if ((thrusterD > 100 || (thrusterD == -1)) && !up) {
+                if ((thrusterD[0] > 100 || thrusterD[0] == -1) && !up) {
                     player.retractGears();
                 }
 
                 // if sufficiently close and the angle of gears is not 
                 // already extended then we shall extend them.
-                else if (thrusterD < 100 && thrusterD != -1 && !down
-                    && player.parts.indexOf(player.rightGear) != -1) {
+                else if (thrusterD[0] < 100 && thrusterD[0] != -1 && !down) {
                     player.extendGears();
                 }
 

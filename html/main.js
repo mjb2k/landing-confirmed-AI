@@ -3,13 +3,14 @@
 // global scope variables
 var engine;
 var render;
+var player;
+var controller;
 var runner = Matter.Runner.create();
-var players = []; // population
 var level;
 var objects = [];
 var objective; // a single body that is considered the objective
 const d = new Date();
-var starTime = d.getTime();
+var startTime = d.getTime();
 
 // create the engine and render.
 function init() {
@@ -29,8 +30,8 @@ function init() {
 
 
     addLevel();
-    for (i =0; i < 100; i++)
-        players.push(addPlayer());
+    addPlayer();
+    addController();
     
 }
 
@@ -40,4 +41,8 @@ function addPlayer() {
 
 function addLevel() {
     level = new Level1();
+}
+
+function addController() {
+    controller = new Controller(player);
 }

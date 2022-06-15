@@ -112,7 +112,7 @@ class Player {
         var collidedPoint;
         var dist;
         var midpoint;
-        var distance = [];
+        var distance = [-1, -1, -1];
         
 
         if (downRay.length > 0) {
@@ -124,26 +124,23 @@ class Player {
             // this part is debugging to visualize the raytracing lines
             midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
             //this.drawDebugLine(midpoint.x, midpoint.y, ang, dist);
-            distance = dist;
+            distance[0] = dist;
         }
         if (leftRay.length > 0) {
             collidedPoint = leftRay[0].point;
             dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, thrusterPos));
             midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
             //this.drawDebugLine(midpoint.x, midpoint.y, ang-Math.PI/2, dist);
-            if (dist < distance) distance = dist;
+            distance[1] = dist;
         }
         if (rightRay.length > 0) {
             collidedPoint = rightRay[0].point;
             dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, thrusterPos));
             midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
             //this.drawDebugLine(midpoint.x, midpoint.y, ang+Math.PI/2, dist);
-            if (dist < distance) distance = dist;
+            distance[2] = dist;
         }
-
-        if (distance != 1000) return distance;
-        else return -1;
-
+        return distance;
     }
 
     // debug tool to draw the raylines (they are done by matter.js but have no meaningful physical properties)
