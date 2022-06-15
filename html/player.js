@@ -42,6 +42,7 @@ class Player {
             parts: this.parts
         });
 
+
         // these are attributes that are relevant to the player but aren't bodies
         this.fullBody.collisionFilter.group = -1; // prevent collisions with debugged raytracing lines
         this.fullBody.isStatic = false;
@@ -98,8 +99,8 @@ class Player {
         // 1000 pixels away in the opposite direction the body is facing.
         var ang = this.fullBody.angle;
         var thrusterPos = this.fullBody.parts[2].position
-        var endPos = {x: thrusterPos.x + -1*Math.sin(ang)*1000, y:thrusterPos.y + Math.cos(ang)*1000}
         
+        var endPos = {x: thrusterPos.x + -1*Math.sin(ang)*1000, y:thrusterPos.y + Math.cos(ang)*1000}
         var leftPos = {x: thrusterPos.x + -1*Math.cos(ang)*1000, y:thrusterPos.y + -1*Math.sin(ang)*1000}
         var rightPos = {x: thrusterPos.x + Math.cos(ang)*1000, y:thrusterPos.y + Math.sin(ang)*1000}
 
@@ -139,6 +140,73 @@ class Player {
             midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, thrusterPos), .5);
             //this.drawDebugLine(midpoint.x, midpoint.y, ang+Math.PI/2, dist);
             distance[2] = dist;
+        }
+        return distance;
+    }
+
+
+    // detects the distance from the main body to objects surrounding it to detect danger close
+    // things from the left, right, above, and in the diagonals (5 directions)
+    mainBodyDelta() {
+        // first we need to calculate a position the line ends at from the thrusters body to
+        // 1000 pixels away in the opposite direction the body is facing.
+        var mainPos = this.mainBody.position
+        var ang = this.fullBody.angle;
+
+        var upPos = {x: mainPos.x + Math.sin(ang)*250, y:mainPos.y + -1*Math.cos(ang)*250}
+        var leftPos = {x: mainPos.x + -1*Math.cos(ang)*250, y:mainPos.y + -1*Math.sin(ang)*250}
+        var rightPos = {x: mainPos.x + Math.cos(ang)*250, y:mainPos.y + Math.sin(ang)*250}
+        var upleftPos = {x: mainPos.x + Math.sin(ang-.21)*250, y:mainPos.y + -1*Math.cos(ang-.21)*250}
+        var uprightPos = {x: mainPos.x + Math.sin(ang+.21)*250, y:mainPos.y + -1*Math.cos(ang+.21)*250}
+
+        // call raycast to get a list of ray collided bodies.
+        var upRay = raycast(objects, mainPos, upPos, true);
+        var leftRay = raycast(objects, mainPos, leftPos, true);
+        var rightRay = raycast(objects, mainPos, rightPos, true);
+        var upleftRay = raycast(objects, mainPos, upleftPos, true);
+        var uprightRay = raycast(objects, mainPos, uprightPos, true);
+
+        // stuff for the below statements
+        var collidedPoint;
+        var dist;
+        var midpoint;
+        var distance = [-1, -1, -1, -1, -1];
+        
+
+        if (upRay.length > 0) {
+            collidedPoint = upRay[0].point;
+            dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, mainPos));
+            midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, mainPos), .5);
+            //this.drawDebugLine(midpoint.x, midpoint.y, ang, dist);
+            distance[0] = dist;
+        }
+        if (leftRay.length > 0) {
+            collidedPoint = leftRay[0].point;
+            dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, mainPos));
+            midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, mainPos), .5);
+            //this.drawDebugLine(midpoint.x, midpoint.y, ang-Math.PI/2, dist);
+            distance[1] = dist;
+        }
+        if (rightRay.length > 0) {
+            collidedPoint = rightRay[0].point;
+            dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, mainPos));
+            midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, mainPos), .5);
+            //this.drawDebugLine(midpoint.x, midpoint.y, ang+Math.PI/2, dist);
+            distance[2] = dist;
+        }
+        if (upleftRay.length > 0) {
+            collidedPoint = upleftRay[0].point;
+            dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, mainPos));
+            midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, mainPos), .5);
+            //this.drawDebugLine(midpoint.x, midpoint.y, ang-.1745, dist);
+            distance[3] = dist;
+        }
+        if (uprightRay.length > 0) {
+            collidedPoint = uprightRay[0].point;
+            dist = Matter.Vector.magnitude(Matter.Vector.sub(collidedPoint, mainPos));
+            midpoint = Matter.Vector.mult(Matter.Vector.add(collidedPoint, mainPos), .5);
+            //this.drawDebugLine(midpoint.x, midpoint.y, ang+.1745, dist);
+            distance[4] = dist;
         }
         return distance;
     }

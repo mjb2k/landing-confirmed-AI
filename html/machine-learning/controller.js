@@ -41,11 +41,12 @@ class Controller {
         1. Orientation (angle)
         2. Velocity
         3. Distance to objective
-        4. Danger close to objects above
-        5. Danger close to objects left
-        6. Danger close to objects below
+        4. Time
+        5. Danger close to objects above
+        6. Danger close to objects left
         7. Danger close to objects right
-        8. time
+        8. Danger close to objects upleft
+        9. Danger close to objects upright
     */
     getState() {
         this.state =
@@ -55,6 +56,10 @@ class Controller {
                     this.player.distanceToObjective(),
                     d.getTime() - startTime
                 ]
+        var a = this.player.mainBodyDelta();
+        for (var i=0; i<5; i++) {
+            this.state.push(a[i]); 
+        }
     }
 
 
@@ -82,8 +87,8 @@ class Controller {
         We have three options, both thrust, left, or right.
     */
     move() {
-         var rand = Math.random();
-         if (rand < .5) this.player.leftThrust();
-         if (rand > .5) this.player.rightThrust();
+         //var rand = Math.random();
+         //if (rand < .5) this.player.leftThrust();
+         //if (rand > .5) this.player.rightThrust();
     }
 }
