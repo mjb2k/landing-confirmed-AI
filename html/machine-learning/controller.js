@@ -1,30 +1,33 @@
 /*
-This file will consist of the Deep-Q learning
-algorithm to control the player.
+    This file will consist of the Deep-Q learning
+    algorithm to control the player.
 
-Important stuff for the player to know:
-There are only three actions a player can do
-- leftThrust
-- rightThrust
-- fullThrust (both left and right)
+    Important stuff for the player to know:
+    There are only three actions a player can do
+    - leftThrust
+    - rightThrust
+    - fullThrust (both left and right)
 
-We want to reward the player based on two things:
-1. if it wins the game we reward
-2. the closer it gets to the objective
-3. the faster it gets to the objective
+    We want to reward the player based on two things:
+    1. if it wins the game
+    We punish the player based on:
+    1. if it dies
+    2. how far away from the objective it is (regressive)
+    3. how much time it takes (regressive)
 
-The way Deep Q-Learning works is as follows:
-1. Game starts and the Q-value is randomly initialized
-2. agent collects current state (calculated based on our stuff)
-3. agent executes action based on said state
-4. After this, the AI is rewarded and updates its Q value based on
-the bellman equation
-5. repeat steps 3-4 until game over
+    The way Deep Q-Learning works is as follows:
+    1. Game starts and the Q-value is randomly initialized
+    2. agent collects current state (calculated based on our stuff)
+    3. agent executes action based on said state
+    4. After this, the AI is rewarded and updates its Q value based on
+    the bellman equation
+    5. repeat steps 3-4 until game over
 
-We want to minimize the lost
+    We want to minimize the lost
 
-https://towardsdatascience.com/how-to-teach-an-ai-to-play-games-deep-reinforcement-learning-28f9b920440a
-https://github.com/maurock/snake-ga/blob/master/DQN.py
+    This works with a neural network to figure out what it should do rather than a Q-table
+    The inputs are the state (the 9 values we provide) and the output is the actions defined above
+    Our problem is building the neurons in the network, I have no clue how to do that.
 */
 
 class Controller {
