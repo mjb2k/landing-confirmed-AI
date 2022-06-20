@@ -99,7 +99,7 @@ class Controller {
     */
     move() {
         // there's a 10% chance we get a random action.
-        var value = this.model.chooseAction(this.state, .1);
+        var value = this.model.chooseAction(this.state, 1);
         this.action = value;
         if (value == -1) this.player.leftThrust();
         else if (value == 0) this.player.fullThrust();
