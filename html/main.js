@@ -5,6 +5,8 @@ var engine;
 var render;
 var player;
 var controller;
+var model;
+var memory;
 var runner = Matter.Runner.create();
 var level;
 var objects = [];
@@ -32,7 +34,6 @@ function init() {
     addLevel();
     addPlayer();
     addController();
-    
 }
 
 function addPlayer() {
@@ -44,5 +45,8 @@ function addLevel() {
 }
 
 function addController() {
-    controller = new Controller(player);
+    model = new Model(3, 9, 3, 100);
+    memory =  new Memory(5000);
+    console.log(model);
+    controller = new Controller(player, model, memory);
 }

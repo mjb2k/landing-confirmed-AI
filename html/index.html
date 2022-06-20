@@ -16,13 +16,20 @@
 
 
     <body onload="init()">
+        <! --- Libraries !>
         <script src="libraries/matter.js"></script>
         <script src="libraries/bodyRotateAroundPoint.js"></script>
         <script src="libraries/raycast.min.js"></script>
+        <script src="libraries/lodash.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+
         <script src="main.js"></script>
         <script src="player.js"></script>
         <script src="level1.js"></script>
         <script src="machine-learning/controller.js"></script>
+        <script src="machine-learning/memory.js"></script>
+        <script src="machine-learning/model.js"></script>
+
 
 
         <canvas id="canvas"></canvas>
@@ -39,9 +46,14 @@
                 // we need to keep track of the previous velocity of the player 
                 player.updatePreVelocity();
 
+
+                /*
+                    Here we decide what the controller is going to do by grabbing the state and 
+                    then we make our move (which will be recorded in the next tick).
+                */
                 // Record the state of the player
                 controller.getState();
-                // make the next move of the player
+                // make the next move of the player, will be reflected in the next tick
                 controller.move();
 
 
@@ -225,7 +237,11 @@
                 }
 
                 // in LC if the player is >400 meters away from the objective, they die
-                // TODO (need to make the objective first)
+                
+                if (player.distanceToObjective() > 4000) {
+                    console.log("death by distance");
+                    player.dead = true;
+                }
 
 
             
@@ -250,20 +266,40 @@
 
 
                 /* 
-                    !!!!!!!!!!!!!!!!!!!!!!!!!!!
-                         DEATH & UPDATE LEVEL
-                    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                         DEATH & UPDATE LEVEL & CONTROLLER
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 */
 
 
                 // deletes the player if they're dead, and gears.
                 if (player.dead) {
+                    // this is how the controller learns
+                    controller.replay();
+
                     Matter.World.remove(engine.world, player.fullBody);
                     if (objects.indexOf(player.leftGear) != -1)
                         Matter.World.remove(engine.world, player.leftGear);
                     if (objects.indexOf(player.rightGear) != -1)
                         Matter.World.remove(engine.world, player.rightGear);
+                    
+                    
+                    addPlayer();
+                    controller.player = player;
                 }
+                else {
+                    /*
+                        Record the controllers reward and get the new state to put into the controllers memory
+                    */
+                    // we need to get the oldState, the reward, and action we took to fill memory.
+                    controller.setReward();
+                    var oldState = { ...controller.state}; // no idea (apparently a deep copy)
+                    controller.getState();
+                    controller.memory.addSample([oldState, controller.action, controller.reward, controller.state]);
+                }
+                
+
+                // Finally we update the level (rotate the blocks that spin)
                 level.update();
             });
         </script>
