@@ -275,7 +275,6 @@
                 // deletes the player if they're dead, and gears.
                 if (player.dead) {
                     // this is how the controller learns
-                    controller.replay();
 
                     Matter.World.remove(engine.world, player.fullBody);
                     if (objects.indexOf(player.leftGear) != -1)
@@ -286,6 +285,8 @@
                     
                     addPlayer();
                     controller.player = player;
+                    controller.epsilon /= (10/9);
+                    controller.replay();
                 }
                 else {
                     /*
@@ -293,7 +294,7 @@
                     */
                     // we need to get the oldState, the reward, and action we took to fill memory.
                     controller.setReward();
-                    var oldState = { ...controller.state}; // no idea (apparently a deep copy)
+                    var oldState = tf.clone(controller.state);
                     controller.getState();
                     controller.memory.addSample([oldState, controller.action, controller.reward, controller.state]);
                 }

@@ -46,7 +46,6 @@ function addLevel() {
 
 function addController() {
     model = new Model(3, 9, 3, 100);
-    memory =  new Memory(5000);
-    console.log(model);
+    memory =  new Memory(500);
     controller = new Controller(player, model, memory);
 }
