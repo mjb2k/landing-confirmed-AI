@@ -39,7 +39,7 @@ class Controller {
         this.model = model;
         this.memory = memory;
         this.action;
-        this.epsilon = 1;
+        this.epsilon = .1;
         
     }
 
@@ -60,15 +60,17 @@ class Controller {
         var state =
                 [
                     this.player.fullBody.angle, 
-                    this.player.fullBody.velocity,
+                    this.player.fullBody.velocity.x,
+                    this.player.fullBody.velocity.y,
                     this.player.distanceToObjective(),
-                    d.getTime() - startTime
+                    (new Date().getTime() - startTime)/1000
                 ]
         var a = this.player.mainBodyDelta();
         for (var i=0; i<5; i++) {
             state.push(a[i]); 
         }
         this.state = tf.tensor([state]);
+        this.state.print();
     }
 
 
@@ -101,7 +103,7 @@ class Controller {
         var value = this.model.chooseAction(this.state, this.epsilon);
         this.action = value;
         if (value == -1) this.player.leftThrust();
-        else if (value == 0) this.player.fullThrust();
+        else if (value == 0);// do nothing
         else if (value == 1) this.player.rightThrust();
     }
 
@@ -114,9 +116,11 @@ class Controller {
         // Sample from memory
         const batch = this.memory.sample(this.model.batchSize);
         const states = batch.map(([state, , , ]) => state);
+        //states.forEach(state => state.print());
         const nextStates = batch.map(
             ([, , , nextState]) => nextState ? nextState : tf.zeros([this.model.numStates])
         );
+        console.log(nextStates);
         // Predict the values of each action at each state
         const qsa = states.map((state) => this.model.predict(state));
         // Predict the values of each action at each next state

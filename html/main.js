@@ -11,8 +11,7 @@ var runner = Matter.Runner.create();
 var level;
 var objects = [];
 var objective; // a single body that is considered the objective
-const d = new Date();
-var startTime = d.getTime();
+var startTime = new Date().getTime();
 
 // create the engine and render.
 function init() {
@@ -45,7 +44,7 @@ function addLevel() {
 }
 
 function addController() {
-    model = new Model(3, 9, 3, 100);
+    model = new Model([8], 10, 3, 100);
     memory =  new Memory(500);
     controller = new Controller(player, model, memory);
 }

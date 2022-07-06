@@ -33,7 +33,7 @@ class Model {
             inputShape: i === 0 ? [this.numStates] : undefined
             }));
         });
-        this.network.add(tf.layers.dense({units: this.numActions}));
+        this.network.add(tf.layers.dense({units: this.numActions, activation: "softmax"}));
 
         this.network.summary();
         this.network.compile({optimizer: 'adam', loss: 'meanSquaredError'});
